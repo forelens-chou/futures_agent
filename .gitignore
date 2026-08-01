@@ -1,0 +1,32 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+.cache
+htmlcov/
+
+# IDE configuration
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# OS-generated files
+.DS_Store
