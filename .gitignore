@@ -30,3 +30,6 @@ htmlcov/
 
 # OS-generated files
 .DS_Store
+
+# ADK generated files
+.adk/

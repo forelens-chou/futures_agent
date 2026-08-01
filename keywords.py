@@ -1,7 +1,20 @@
 # 1. 产业链映射字典（可扩展为数据库查询）
 COMMODITY_MAPPING = {
     "白糖": {
-        "upstream": ["甘蔗", "甜菜", "巴西天气", "印度减产", "榨季"],
+         "upstream": {
+            "国内种植生产": [
+                "广西甘蔗", "云南甘蔗", "新疆甜菜", "内蒙古甜菜", 
+                "国内榨季开机率", "甘蔗收购价", "国内产糖量预测"
+            ],
+            "国际种植生产": [
+                "CS Brazil sugarcane crush", 
+                "Brazil sugar harvest rain weather delay", 
+                "Brazil sugar ethanol parity ratio", 
+                "India sugarcane crop yield monsoon", 
+                "India sugar export restriction quota", 
+                "Thailand sugar production export"
+            ]
+        },
         "downstream": ["食品加工", "饮料行业", "淀粉糖", "代糖价格"],
         "inventory": ["国内糖厂库存", "中糖协库存", "交易所仓单", "进口糖数量"],
         "policy_substitutes": ["关税政策", "国家储备糖投放", "高果糖浆"]
