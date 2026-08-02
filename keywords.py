@@ -1,22 +1,16 @@
 # 1. 产业链映射字典（可扩展为数据库查询）
 COMMODITY_MAPPING = {
-    "白糖": {
-         "upstream": {
-            "国内种植生产": [
-                "广西甘蔗", "云南甘蔗", "新疆甜菜", "内蒙古甜菜", 
-                "国内榨季开机率", "甘蔗收购价", "国内产糖量预测"
-            ],
+     "白糖": {
+        "upstream": {
+            "国内种植生产": ["广西甘蔗", "云南甘蔗", "甘蔗收购价", "国内产糖量预测"],
             "国际种植生产": [
-                "CS Brazil sugarcane crush", 
-                "Brazil sugar harvest rain weather delay", 
-                "Brazil sugar ethanol parity ratio", 
-                "India sugarcane crop yield monsoon", 
+                "CS Brazil sugarcane crush rain delay", 
                 "India sugar export restriction quota", 
                 "Thailand sugar production export"
             ]
         },
-        "downstream": ["食品加工", "饮料行业", "淀粉糖", "代糖价格"],
-        "inventory": ["国内糖厂库存", "中糖协库存", "交易所仓单", "进口糖数量"],
+        "downstream": ["食品加工", "饮料行业", "代糖价格"],
+        "inventory": ["国内糖厂库存", "中糖协库存", "进口糖数量"],
         "policy_substitutes": ["关税政策", "国家储备糖投放", "高果糖浆"]
     },
     "纸浆": {
@@ -41,15 +35,13 @@ COMMODITY_MAPPING = {
 
 # 2. 定义产业链查询 Tool
 def get_industry_chain_keywords(commodity: str) -> dict:
-    """
-    根据输入的期货商品（如：白糖、纸浆、烧碱、纯碱），返回其上下游、库存、政策四个维度的专业研究关键词。
-    """
-    return COMMODITY_MAPPING.get(
-        commodity, 
-        {
-            "upstream": [commodity + " 生产原材料", commodity + " 生产成本"],
-            "downstream": [commodity + " 消费", commodity + " 下游"],
-            "inventory": [commodity + " 库存", commodity + " 仓单"],
-            "policy_substitutes": [commodity + " 政策", commodity + " 替代品"]
+    """根据商品名称获取其上游、下游、库存、政策替代品四个维度的关键检索词矩阵。"""
+    data = COMMODITY_MAPPING.get(commodity)
+    if not data:
+        return {
+            "upstream": [f"{commodity} 生产原材料", f"{commodity} 生产成本"],
+            "downstream": [f"{commodity} 消费需求"],
+            "inventory": [f"{commodity} 库存"],
+            "policy_substitutes": [f"{commodity} 政策"]
         }
-    )
+    return data
