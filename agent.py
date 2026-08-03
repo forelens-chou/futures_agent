@@ -54,6 +54,8 @@ researcher_agent = Agent(
     2. 过滤掉陈旧新闻和纯每日报价数据。
     3. 将检索到的英文国际资讯**翻译并精炼为中文**。
     4. 提炼出最具价格传导逻辑的 1-3 条核心最新新闻（包含主题、逻辑摘要和 URL）。
+    【原则】：
+    - 绝对保持客观！只提供事实（如产量、天气、库存数据、政策条文），**严禁加入任何主观行情预测或观点**。
     """,
     tools=[google_search],
     generate_content_config=generate_content_config
@@ -70,13 +72,15 @@ root_agent = Agent(
     instruction=f"""
     你是期货商品产业链资讯收集总指挥。今天的日期是：{get_current_date_str()}。
 
-    请严格按照以下步骤完成工作：
-    Step 1: 调用 `query_planner_agent`，让其根据用户输入的商品（如“白糖”），生成 4 个维度的精细化 Search Queries。
-    Step 2: 调用 `researcher_agent`，将生成的 Search Queries 传递给它，执行搜索并获取过滤翻译后的研报摘要。
-    Step 3: 汇总结果，格式化输出。
+    你必须严格按照以下 4 个步骤连续执行，不得中途停止：
+
+    Step 1: 调用 `query_planner_agent` 工具，根据用户输入的商品生成 4 个维度的搜索词。
+    Step 2: 调用 `researcher_agent` 工具，将 Step 1 生成的搜索词传给它，获取过滤翻译后的客观事实摘要。
+    Step 3: **核心分析（必须亲自执行）**：仔细阅读 Step 2 返回的事实，运用你的期货交易逻辑进行推演，得出“当前市场判断”以及“后市预测与触发条件”。
+    Step 4: 汇总 Step 1、Step 2 和 Step 3 的所有内容，按照【最终输出格式要求】生成完整报告。
 
     【最终输出格式要求】：
-    必须严格按以下格式展示：
+    必须严格按以下格式展示，**不得缺失任何板块**：
 
     ## 1. 搜索关键词记录
     - 上游搜索词: "..."
@@ -89,14 +93,27 @@ root_agent = Agent(
     - **新闻标题/主题**: ...
       * 核心逻辑: ...
       * 来源链接: ...
-
     ### [下游维度]
     ...
     ### [库存维度]
     ...
     ### [政策/替代品维度]
     ...
+
+    ## 3. 当前市场判断与后市分析
+    - **当前主导逻辑**：[结合 Step 2 的事实，说明目前市场是由供给端、需求端还是政策驱动]
+    - **多空力量对比**：[利多因素 vs 利空因素分析]
+
+    ## 4. 后市预测与触发条件（Scenario Analysis）
+    - **基准预测（概率较大）**：[对未来价格走势的区间或方向判断]
+    - **推演与关键触发条件**：
+      * 触发条件 A(如:若巴西中南部降雨持续超预期导致榨季提前结束） -> **推演结果**：供给趋紧，价格突破高点。
+      * 触发条件 B(如:若国内消费不及预期，库存累积） -> **推演结果**：上行受阻，转为震荡回调。
     """,
-    sub_agents=[query_planner_agent, researcher_agent],
+    # 注意：这里使用 AgentTool 将子 Agent 转为常规工具，而不是放在 sub_agents 中！
+    tools=[
+        AgentTool(agent=query_planner_agent),
+        AgentTool(agent=researcher_agent)
+    ],
     generate_content_config=generate_content_config,
 )
